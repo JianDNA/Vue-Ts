@@ -123,9 +123,14 @@ export default class NormalForm extends Vue {
         registerUser(this.registerData)
           .then((data) => {
             console.log(data)
-            this.$message.success('注册成功')
+            if (data.status === 200) {
+              this.$router.push('/login')
+            } else {
+              this.$message.error(data.msg)
+            }
           })
           .catch((e) => {
+            this.updateCaptcha()
             this.$message.error(e.message)
           })
       } else {
