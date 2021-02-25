@@ -2,7 +2,7 @@
     <div class="register_container">
       <div class="register_box">
         <h1>欢迎注册</h1>
-        <el-tabs :tab-position="'left'" :stretch="true">
+        <el-tabs :tab-position="'left'" :stretch="true" style="height: 350px">
           <el-tab-pane label="普通注册">
             <NormalForm/>
           </el-tab-pane>
@@ -41,7 +41,7 @@ export default class Register extends Vue {
   position: relative;
   .register_box{
     width: 600px;
-    height: 450px;
+    height: 440px;
     background: #fff;
     border-radius: 10px;
     position: absolute;

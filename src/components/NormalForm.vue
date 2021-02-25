@@ -1,12 +1,14 @@
 <template>
-  <el-form ref="form" :model="registerData " label-width="0px">
-    <el-form-item label="">
+  <!--  添加校验规则 1. 为表单指定规则-->
+  <el-form ref="form" :model="registerData" :rules="registerRules" label-width="0px">
+    <!--  添加校验规则 2. 为表单项指定prop-->
+    <el-form-item label="" prop="username">
       <el-input prefix-icon="el-icon-user" v-model="registerData.username"></el-input>
     </el-form-item>
-    <el-form-item label="">
+    <el-form-item label="" prop="password">
       <el-input prefix-icon="el-icon-lock" v-model="registerData.password"></el-input>
     </el-form-item>
-    <el-form-item label="">
+    <el-form-item label="" prop="captcha">
       <el-row>
         <el-col :span="18">
           <el-input prefix-icon="el-icon-lock" v-model="registerData.captcha"></el-input>
@@ -19,7 +21,7 @@
     <el-form-item>
       <el-button type="primary" @click="onSubmit" style="width: 100%">注册</el-button>
     </el-form-item>
-    <el-form-item>
+    <el-form-item prop="checked">
       <el-checkbox v-model="registerData.checked">
         <p>阅读并接受
           <a href="javascript:;">《xxx用户协议》</a>
@@ -49,7 +51,71 @@ export default class NormalForm extends Vue {
     checked: true
   };
 
-  onSubmit () {
+  private validateName = (rule: any, value: any, callback: any) => {
+    // 给回调传error就是不通过
+    const reg = /^[A-Za-z0-9]{6,}$/
+    if (value === '') {
+      callback(new Error('请填写用户名'))
+    } else if (value.length < 6) {
+      callback(new Error('用户名至少是6位!'))
+    } else if (!reg.test(value)) {
+      callback(new Error('用户名只能是字母和数字'))
+    } else {
+      callback()
+    }
+  };
+
+  private validatePassword = (rule: any, value: any, callback: any) => {
+    const reg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{8,20}$/
+    if (value === '') {
+      callback(new Error('请填写密码'))
+    } else if (value.length < 6) {
+      callback(new Error('用户名应该是8-20位!'))
+    } else if (!reg.test(value)) {
+      callback(new Error('至少包含数字跟字母，可以有符号'))
+    } else {
+      callback()
+    }
+  };
+
+  private validateCaptcha = (rule: any, value: any, callback: any) => {
+    const reg = /^[A-Za-z0-9]{4}$/
+    if (value === '') {
+      callback(new Error('请填写验证码'))
+    } else if (value.length < 4) {
+      callback(new Error('验证码至少是4位!'))
+    } else if (!reg.test(value)) {
+      callback(new Error('验证码只能是字母和数字'))
+    } else {
+      callback()
+    }
+  };
+
+  private validateChecked = (rule: any, value: any, callback: any) => {
+    if (!value) {
+      callback(new Error('请阅读用并同意户协议'))
+    } else {
+      callback()
+    }
+  };
+
+  private registerRules = {
+    username: [
+      { validator: this.validateName, trigger: 'blur' }
+    ],
+    password: [
+      { validator: this.validatePassword, trigger: 'blur' }
+    ],
+    captcha: [
+      { validator: this.validateCaptcha, trigger: 'blur' }
+    ],
+    checked: [
+      { validator: this.validateChecked, trigger: 'change' }
+    ]
+
+  }
+
+  private onSubmit () {
     console.log(66)
   }
 
