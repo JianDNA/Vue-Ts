@@ -1,6 +1,7 @@
 import Vue from 'vue'
-import { Button, Tabs, TabPane, Form, FormItem, Input, Row, Col, Checkbox } from 'element-ui'
+import { Button, Tabs, TabPane, Form, FormItem, Input, Row, Col, Checkbox, Message } from 'element-ui'
 
+Vue.prototype.$message = Message
 Vue.use(Button)
 Vue.use(Tabs)
 Vue.use(TabPane)

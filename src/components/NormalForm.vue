@@ -69,8 +69,8 @@ export default class NormalForm extends Vue {
     const reg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{8,20}$/
     if (value === '') {
       callback(new Error('请填写密码'))
-    } else if (value.length < 6) {
-      callback(new Error('用户名应该是8-20位!'))
+    } else if (value.length < 8) {
+      callback(new Error('密码名应该是8-20位!'))
     } else if (!reg.test(value)) {
       callback(new Error('至少包含数字跟字母，可以有符号'))
     } else {
@@ -115,8 +115,15 @@ export default class NormalForm extends Vue {
 
   }
 
+  @Ref() readonly form!: ElForm
   private onSubmit () {
-    console.log(66)
+    this.form.validate((flag) => {
+      if (flag) {
+        console.log('校验通过')
+      } else {
+        (this as any).$message.error('数据格式不对')
+      }
+    })
   }
 
   @Ref() readonly captchaImage!: HTMLImageElement

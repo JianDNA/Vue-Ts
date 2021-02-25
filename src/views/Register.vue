@@ -41,7 +41,7 @@ export default class Register extends Vue {
   position: relative;
   .register_box{
     width: 600px;
-    height: 440px;
+    height: 430px;
     background: #fff;
     border-radius: 10px;
     position: absolute;
