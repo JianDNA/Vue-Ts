@@ -36,6 +36,7 @@
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
+import { registerUser } from '../api/index'
 
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
@@ -47,7 +48,7 @@ export default class NormalForm extends Vue {
     username: '',
     password: '',
     captcha: '',
-    type: 'normal',
+    registerType: 'normal',
     checked: true
   };
 
@@ -119,9 +120,16 @@ export default class NormalForm extends Vue {
   private onSubmit () {
     this.form.validate((flag) => {
       if (flag) {
-        console.log('校验通过')
+        registerUser(this.registerData)
+          .then((data) => {
+            console.log(data)
+            this.$message.success('注册成功')
+          })
+          .catch((e) => {
+            this.$message.error(e.message)
+          })
       } else {
-        (this as any).$message.error('数据格式不对')
+        this.$message.error('数据格式不对')
       }
     })
   }
