@@ -2,9 +2,38 @@
     <div class="register_container">
       <div class="register_box">
         <h1>欢迎注册</h1>
-        <el-tabs tab-position="left" >
+        <el-tabs :tab-position="'left'" :stretch="true">
           <el-tab-pane label="普通注册">
-            <p>普通注册</p>
+            <el-form ref="form" :model="registerData " label-width="0px">
+              <el-form-item label="">
+                <el-input prefix-icon="el-icon-user" v-model="registerData.username"></el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-input prefix-icon="el-icon-lock" v-model="registerData.password"></el-input>
+              </el-form-item>
+              <el-form-item label="">
+                <el-row>
+                  <el-col :span="18">
+                    <el-input prefix-icon="el-icon-lock" v-model="registerData.captcha"></el-input>
+                  </el-col>
+                  <el-col :span="6">
+                    <img src="" alt="" style="width: 100%; height: 40px">
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="onSubmit" style="width: 100%">注册</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-checkbox v-model="registerData.checked">
+                  <p>阅读并接受
+                    <a href="javascript:;">《xxx用户协议》</a>
+                    及
+                    <a href="javascript:;">《xxx隐私权保护申明》</a>
+                  </p>
+                </el-checkbox>
+              </el-form-item>
+            </el-form>
           </el-tab-pane>
           <el-tab-pane label="邮箱注册">
             <p>邮箱注册</p>
@@ -26,7 +55,17 @@ import { Vue, Component } from 'vue-property-decorator'
   components: {}
 })
 export default class Register extends Vue {
+  registerData = {
+    username: '',
+    password: '',
+    captcha: '',
+    registerType: 'normal',
+    checked: true
+  }
 
+  onSubmit () {
+    console.log(66)
+  }
 }
 </script>
 
