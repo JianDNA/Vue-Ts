@@ -6,7 +6,7 @@
       <el-input prefix-icon="el-icon-user" v-model="registerData.username"></el-input>
     </el-form-item>
     <el-form-item label="" prop="password">
-      <el-input prefix-icon="el-icon-lock" v-model="registerData.password"></el-input>
+      <el-input prefix-icon="el-icon-lock" type="password" v-model="registerData.password"></el-input>
     </el-form-item>
     <el-form-item label="" prop="captcha">
       <el-row>
@@ -144,6 +144,10 @@ export default class NormalForm extends Vue {
     // 不符合ts规范(强类型)
     // (this.$refs.captchaImage as any).src = `http://127.0.0.1:7001/imageCode?r=${Math.random()}`
     this.captchaImage.src = `http://127.0.0.1:7001/imageCode?r=${Math.random()}`
+  }
+
+  public resetForm () {
+    this.form.resetFields()
   }
 }
 </script>

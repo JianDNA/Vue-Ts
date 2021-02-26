@@ -2,15 +2,15 @@
     <div class="register_container">
       <div class="register_box">
         <h1>欢迎注册</h1>
-        <el-tabs :tab-position="'left'" :stretch="true" style="height: 350px">
+        <el-tabs :tab-position="'left'" :stretch="true" style="height: 350px" @tab-click="handleClick">
           <el-tab-pane label="普通注册">
-            <NormalForm/>
+            <NormalForm ref="normalForm"/>
           </el-tab-pane>
           <el-tab-pane label="邮箱注册">
-            <EmailForm/>
+            <EmailForm ref="emailForm"/>
           </el-tab-pane>
           <el-tab-pane  label="手机注册">
-            <PhoneForm/>
+            <PhoneForm ref="phoneForm"/>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Ref } from 'vue-property-decorator'
 import NormalForm from '@/components/NormalForm.vue'
 import EmailForm from '@/components/EmailForm.vue'
 import PhoneForm from '@/components/PhoneForm.vue'
@@ -33,7 +33,14 @@ import PhoneForm from '@/components/PhoneForm.vue'
   }
 })
 export default class Register extends Vue {
-
+  @Ref() readonly normalForm!: NormalForm
+  @Ref() readonly emailForm!: NormalForm
+  @Ref() readonly phoneForm!: NormalForm
+  private handleClick () {
+    this.normalForm.resetForm()
+    this.emailForm.resetForm()
+    this.phoneForm.resetForm()
+  }
 }
 </script>
 

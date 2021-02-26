@@ -6,7 +6,7 @@
       <el-input prefix-icon="el-icon-phone-outline" v-model="registerData.phone"></el-input>
     </el-form-item>
     <el-form-item label="" prop="password">
-      <el-input prefix-icon="el-icon-lock" v-model="registerData.password"></el-input>
+      <el-input prefix-icon="el-icon-lock" type="password" v-model="registerData.password"></el-input>
     </el-form-item>
     <el-form-item label="" prop="captcha">
       <el-row>
@@ -149,6 +149,10 @@ export default class NormalForm extends Vue {
         this.$message.error('数据格式不对')
       }
     })
+  }
+
+  public resetForm () {
+    this.form.resetFields()
   }
 }
 </script>
