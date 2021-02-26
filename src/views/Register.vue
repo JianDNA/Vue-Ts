@@ -7,7 +7,7 @@
             <NormalForm/>
           </el-tab-pane>
           <el-tab-pane label="邮箱注册">
-            <p>邮箱注册</p>
+            <EmailForm/>
           </el-tab-pane>
           <el-tab-pane  label="手机注册">
             <p>手机注册</p>
@@ -20,11 +20,14 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import NormalForm from '@/components/NormalForm.vue'
+import EmailForm from '@/components/EmailForm.vue'
+
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
   name: 'Register',
   components: {
-    NormalForm
+    NormalForm,
+    EmailForm
   }
 })
 export default class Register extends Vue {
