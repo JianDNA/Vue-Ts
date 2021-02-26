@@ -48,7 +48,7 @@ export default class NormalForm extends Vue {
     username: '',
     password: '',
     captcha: '',
-    registerType: 'normal',
+    type: 'normal',
     checked: true
   };
 
