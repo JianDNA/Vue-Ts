@@ -1,7 +1,7 @@
 <template>
   <div class="login_container">
     <div class="login_box">
-      <h1>欢迎登陆</h1>
+      <h1 @click="myFn">欢迎登陆</h1>
       <el-form ref="form" :model="loginData" :rules="loginRules" label-width="0px">
         <!--  添加校验规则 2. 为表单项指定prop-->
         <el-form-item label="" prop="username">
@@ -31,7 +31,7 @@
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
-import { loginUser } from '@/api'
+import { loginUser, isLogin } from '@/api'
 
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
@@ -124,9 +124,17 @@ export default class Login extends Vue {
         loginUser(this.loginData)
           .then((data) => {
             console.log(data)
-            if (data.status === 200) {
+            if (data.code === 200) {
+              /*
+              将jwt进行存储
+              cookie: 体积不大
+              sessionStorage: 不需要持久化
+              localStorage: 体积较大且需要持久存储
+               */
+              sessionStorage.setItem('token', data.data.token)
               this.$router.push('/admin')
             } else {
+              this.updateCaptcha()
               this.$message.error(data.msg)
             }
           })
@@ -138,6 +146,16 @@ export default class Login extends Vue {
         this.$message.error('数据格式不对')
       }
     })
+  }
+
+  private myFn () {
+    isLogin()
+      .then(data => {
+        console.log(data)
+      })
+      .catch(e => {
+        console.log(e)
+      })
   }
 }
 </script>
