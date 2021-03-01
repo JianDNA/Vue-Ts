@@ -17,6 +17,7 @@
           text-color="#666"
           active-text-color="deepskyblue"
           :collapse="isCollapse"
+          :router="true"
           :collapse-transition="false">
           <!--一级菜单-->
           <el-submenu index="1">
@@ -27,7 +28,7 @@
             <!--二级菜单-->
             <el-menu-item-group>
               <el-menu-item>
-                <el-menu-item index="1-1">
+                <el-menu-item index="/users">
                   <template slot="title">
                     <i class="el-icon-user"></i>
                     <span>用户列表</span>
@@ -44,7 +45,7 @@
             <!--二级菜单-->
             <el-menu-item-group>
               <el-menu-item>
-                <el-menu-item index="2-1">
+                <el-menu-item index="/roles">
                   <template slot="title">
                     <i class="el-icon-view"></i>
                     <span>角色列表</span>
@@ -53,7 +54,7 @@
               </el-menu-item>
 
               <el-menu-item>
-                <el-menu-item index="2-2">
+                <el-menu-item index="/rights">
                   <template slot="title">
                     <i class="el-icon-unlock"></i>
                     <span>权限列表</span>
@@ -64,7 +65,9 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>

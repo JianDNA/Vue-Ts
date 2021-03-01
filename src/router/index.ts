@@ -3,6 +3,10 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Register from '../views/Register.vue'
 import Login from '../views/Login.vue'
 import Admin from '@/views/Admin.vue'
+import Welcome from '@/components/Welcome'
+import Users from '@/components/Users'
+import Rights from '@/components/Rights'
+import Roles from '@/components/Roles'
 import Cookies from 'js-cookie'
 Vue.use(VueRouter)
 
@@ -20,7 +24,14 @@ const routes: Array<RouteConfig> = [
   {
     path: '/admin',
     name: 'Admin ',
-    component: Admin
+    component: Admin,
+    redirect: 'welcome',
+    children: [
+      { path: '/welcome', component: Welcome },
+      { path: '/users', component: Users },
+      { path: '/rights', component: Rights },
+      { path: '/roles', component: Roles }
+    ]
   }
 ]
 
