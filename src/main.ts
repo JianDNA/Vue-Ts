@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import './plugins/element.js'
 import 'normalize.css'
+// 引入字体图标库
+import './assets/iconfont/iconfont.css'
 
 Vue.config.productionTip = false
 

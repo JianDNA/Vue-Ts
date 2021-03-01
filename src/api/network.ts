@@ -14,7 +14,7 @@ const source = CancelToken.source()
 // 请求拦截器
 axios.interceptors.request.use(function (config) {
   // 将token放到headers中
-  config.headers.Authorization = sessionStorage.getItem('token')
+  // config.headers.Authorization = sessionStorage.getItem('token')
   return config
 }, function (error) {
   return Promise.reject(error)

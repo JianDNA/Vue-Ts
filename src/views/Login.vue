@@ -24,6 +24,14 @@
           <el-button type="primary" @click="onSubmit" style="width: 100%">注册</el-button>
         </el-form-item>
       </el-form>
+      <ul class="auth_box">
+        <li class="iconfont icon-QQ" style="color: skyblue"></li>
+        <li class="iconfont icon-weixin" style="color: green"></li>
+        <li class="iconfont icon-weibo" style="color: red"></li>
+        <li class="iconfont icon-github" style="color:#000;">
+          <a href="http://127.0.0.1:7001/githubAuth"></a>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -122,7 +130,7 @@ export default class Login extends Vue {
     this.form.validate((flag) => {
       if (flag) {
         loginUser(this.loginData)
-          .then((data) => {
+          .then((data: any) => {
             console.log(data)
             if (data.code === 200) {
               /*
@@ -131,19 +139,19 @@ export default class Login extends Vue {
               sessionStorage: 不需要持久化
               localStorage: 体积较大且需要持久存储
                */
-              sessionStorage.setItem('token', data.data.token)
+              // sessionStorage.setItem('token', data.data.token)
               this.$router.push('/admin')
             } else {
-              this.updateCaptcha()
-              this.$message.error(data.msg)
+              this.updateCaptcha();
+              (this as any).$message.error(data.msg)
             }
           })
           .catch((e) => {
-            this.updateCaptcha()
-            this.$message.error(e.message)
+            this.updateCaptcha();
+            (this as any).$message.error(e.message)
           })
       } else {
-        this.$message.error('数据格式不对')
+        (this as any).$message.error('数据格式不对')
       }
     })
   }
@@ -185,6 +193,24 @@ export default class Login extends Vue {
     .el-form{
       padding: 0 20px;
       box-sizing: border-box;
+    }
+    .auth_box{
+      display: flex;
+      list-style: none;
+      padding: 0;
+      justify-content: space-around;
+      li{
+        font-size: 30px;
+        position: relative;
+        a{
+          position: absolute;
+          left: 0;
+          top: 0;
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+      }
     }
   }
 }

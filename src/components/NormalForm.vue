@@ -121,20 +121,20 @@ export default class NormalForm extends Vue {
     this.form.validate((flag) => {
       if (flag) {
         registerUser(this.registerData)
-          .then((data) => {
+          .then((data: any) => {
             console.log(data)
             if (data.status === 200) {
               this.$router.push('/login')
             } else {
-              this.$message.error(data.msg)
+              (this as any).$message.error(data.msg)
             }
           })
           .catch((e) => {
-            this.updateCaptcha()
-            this.$message.error(e.message)
+            this.updateCaptcha();
+            (this as any).$message.error(e.message)
           })
       } else {
-        this.$message.error('数据格式不对')
+        (this as any).$message.error('数据格式不对')
       }
     })
   }
