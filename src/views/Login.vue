@@ -29,7 +29,8 @@
         <li class="iconfont icon-weixin" style="color: green"></li>
         <li class="iconfont icon-weibo" style="color: red"></li>
         <li class="iconfont icon-github" style="color:#000;">
-          <a href="http://127.0.0.1:7001/githubAuth"></a>
+<!--          <a href="http://127.0.0.1:7001/githubAuth"></a>-->
+          <a href="http://127.0.0.1:7001/passport/github"></a>
         </li>
       </ul>
     </div>
