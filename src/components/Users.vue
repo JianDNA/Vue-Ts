@@ -48,7 +48,7 @@
             </div>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" @click="addUser">添加用户</el-button>
+            <el-button type="primary" @click="showAddUserDialog">添加用户</el-button>
             <el-button type="primary"  @click="importUser">导入用户</el-button>
           </el-col>
         </el-row>
@@ -107,11 +107,39 @@
         :total="400"
         layout="total, sizes, prev, pager, next, jumper">
       </el-pagination>
+
+      <!--添加用户对话框-->
+      <el-dialog
+        title="添加用户"
+        :visible.sync="addUserDialogVisible"
+        @close="closeAddUserDialog"
+        width="30%">
+        <el-form ref="form" :model="userData" :rules="addUserRules" label-width="0px">
+          <el-form-item prop="username">
+            <el-input v-model="userData.username" prefix-icon="el-icon-user"></el-input>
+          </el-form-item>
+          <el-form-item prop="email">
+            <el-input v-model="userData.email" prefix-icon="el-icon-message"></el-input>
+          </el-form-item>
+          <el-form-item prop="phone">
+            <el-input v-model="userData.phone" prefix-icon="el-icon-phone-outline"></el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="userData.password" prefix-icon="el-icon-lock"></el-input>
+          </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="addUserDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="createUser">确 定</el-button>
+      </span>
+      </el-dialog>
     </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Ref } from 'vue-property-decorator'
+import { ElForm } from 'element-ui/types/form'
 import { getUsers } from '../api/index'
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
@@ -151,6 +179,75 @@ export default class Users extends Vue {
     pageSize: 5
   }
 
+  private userData = {
+    username: '',
+    email: '',
+    phone: '',
+    password: ''
+  }
+
+  private addUserDialogVisible = false
+
+  // 校验规则相关
+  private validateName = (rule: any, value: any, callback: any) => {
+    const reg = /^[A-Za-z0-9]{6,}$/
+    if (value === '') {
+      callback(new Error('请填写用户名'))
+    } else if (value.length < 6) {
+      callback(new Error('用户名至少是6位!'))
+    } else if (!reg.test(value)) {
+      callback(new Error('用户名只能是字母和数字'))
+    } else {
+      callback()
+    }
+  };
+
+  private validateEmail = (rule: any, value: any, callback: any) => {
+    const reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+    if (value && !reg.test(value)) {
+      callback(new Error('邮箱格式不正确'))
+    } else {
+      callback()
+    }
+  };
+
+  private validatePassword = (rule: any, value: any, callback: any) => {
+    const reg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{8,20}$/
+    if (value === '') {
+      callback(new Error('请填写密码'))
+    } else if (value.length < 8) {
+      callback(new Error('密码名应该是8-20位!'))
+    } else if (!reg.test(value)) {
+      callback(new Error('至少包含数字跟字母，可以有符号'))
+    } else {
+      callback()
+    }
+  };
+
+  private validatePhone = (rule: any, value: any, callback: any) => {
+    const reg = /^1[3456789]\d{9}/
+    if (value && !reg.test(value)) {
+      callback(new Error('手机格式不正确'))
+    } else {
+      callback()
+    }
+  };
+
+  private addUserRules = {
+    username: [
+      { validator: this.validateName, trigger: 'blur' }
+    ],
+    password: [
+      { validator: this.validatePassword, trigger: 'blur' }
+    ],
+    email: [
+      { validator: this.validateEmail, trigger: 'blur' }
+    ],
+    phone: [
+      { validator: this.validatePhone, trigger: 'blur' }
+    ]
+  }
+
   private onSubmit () {
     console.log(66)
   }
@@ -159,8 +256,10 @@ export default class Users extends Vue {
     console.log(66)
   }
 
-  private addUser () {
-    console.log(66)
+  @Ref() readonly form?: ElForm
+  private showAddUserDialog () {
+    this.addUserDialogVisible = true
+    this.form && this.form.resetFields()
   }
 
   private importUser () {
@@ -179,6 +278,14 @@ export default class Users extends Vue {
     console.log(id)
   }
 
+  private closeAddUserDialog () {
+    console.log(66)
+  }
+
+  private createUser () {
+    console.log(66)
+  }
+
   private changeUserState (id: string) {
     console.log(id)
   }
@@ -186,7 +293,7 @@ export default class Users extends Vue {
   created (): void{
     getUsers()
       .then((response: any) => {
-        console.log(response.status, response.data)
+        // console.log(response.status, response.data)
         this.tableData = response.data.data
       })
       .catch(error => {
