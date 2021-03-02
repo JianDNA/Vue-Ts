@@ -52,6 +52,52 @@
             <el-button type="primary"  @click="importUser">导入用户</el-button>
           </el-col>
         </el-row>
+        <!--中间的表格区域-->
+        <el-table
+          :data="tableData"
+          :border="true"
+          :stripe="true"
+          style="width: 100%">
+          <el-table-column type="index"></el-table-column>
+          <el-table-column
+            prop="username"
+            label="姓名">
+          </el-table-column>
+          <el-table-column
+            prop="email"
+            label="邮箱">
+          </el-table-column>
+          <el-table-column
+            prop="phone"
+            label="电话">
+          </el-table-column>
+          <el-table-column
+            prop="roleName"
+            label="角色">
+          </el-table-column>
+          <el-table-column
+            label="状态">
+            <template slot-scope="scope">
+              <!--            {{ scope.row.userState }}-->
+              <el-switch
+                v-model="scope.row.userState"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                @change="changeUserState(scope.row)">
+              </el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作">
+            <template slot-scope="scope">
+              <el-button type="primary" icon="el-icon-edit" @click.stop="showEditUserDialog(scope.row)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" @click="destroyUser(scope.row.id)"></el-button>
+              <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
+                <el-button type="warning" icon="el-icon-setting" @click="showAddRoleDialog(scope.row)"></el-button>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-card>
     </div>
 </template>
@@ -68,6 +114,25 @@ export default class Users extends Vue {
   private resetDefaultActivePath () {
     sessionStorage.removeItem('activePath')
   }
+
+  private tableData = [
+    {
+      username: 'hzj666',
+      email: 'vusn@qq.com',
+      phone: '15676385637',
+      roleName: '超级管理员',
+      avatarURL: '',
+      userState: true
+    },
+    {
+      username: 'hzj777',
+      email: 'vusn@qq.com',
+      phone: '15676385637',
+      roleName: '超级管理员',
+      avatarURL: '',
+      userState: true
+    }
+  ]
 
   private searchData = {
     currentPage: 1,
@@ -92,6 +157,22 @@ export default class Users extends Vue {
 
   private importUser () {
     console.log(66)
+  }
+
+  private showEditUserDialog (row: string) {
+    console.log(row)
+  }
+
+  private destroyUser (id: string) {
+    console.log(id)
+  }
+
+  private showAddRoleDialog (id: string) {
+    console.log(id)
+  }
+
+  private changeUserState (id: string) {
+    console.log(id)
   }
 }
 </script>
