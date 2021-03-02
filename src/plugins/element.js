@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import {
   Button, Tabs, TabPane, Form, FormItem, Input, Row, Col, Checkbox, Message,
-  Container, Aside, Main, Header, Menu, Submenu, MenuItem, MenuItemGroup
+  Container, Aside, Main, Header, Menu, Submenu, MenuItem, MenuItemGroup, Breadcrumb, BreadcrumbItem,
+  Card, Select, Option
 } from 'element-ui'
 
 Vue.prototype.$message = Message
@@ -22,3 +23,8 @@ Vue.use(Menu)
 Vue.use(Submenu)
 Vue.use(MenuItem)
 Vue.use(MenuItemGroup)
+Vue.use(Breadcrumb)
+Vue.use(BreadcrumbItem)
+Vue.use(Card)
+Vue.use(Select)
+Vue.use(Option)
