@@ -99,6 +99,14 @@
           </el-table-column>
         </el-table>
       </el-card>
+
+      <!--底部分页-->
+      <el-pagination
+        :page-sizes="[5, 10, 20, 50]"
+        :page-size="100"
+        :total="400"
+        layout="total, sizes, prev, pager, next, jumper">
+      </el-pagination>
     </div>
 </template>
 
@@ -180,5 +188,8 @@ export default class Users extends Vue {
 <style lang="scss" scoped>
 .el-breadcrumb{
   padding-bottom: 20px;
+}
+.el-pagination{
+  padding-top: 20px;
 }
 </style>
