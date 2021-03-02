@@ -3,10 +3,10 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Register from '../views/Register.vue'
 import Login from '../views/Login.vue'
 import Admin from '@/views/Admin.vue'
-import Welcome from '@/components/Welcome'
-import Users from '@/components/Users'
-import Rights from '@/components/Rights'
-import Roles from '@/components/Roles'
+import Welcome from '../components/Welcome.vue'
+import Users from '@/components/Users.vue'
+import Rights from '@/components/Rights.vue'
+import Roles from '@/components/Roles.vue'
 import Cookies from 'js-cookie'
 Vue.use(VueRouter)
 
@@ -50,7 +50,7 @@ router.beforeEach((to, from, next) => {
   // 2.其他路由: 获取当前登录状态
   // const token = sessionStorage.getItem('token')
   const token = Cookies.get('token')
-  console.log(token, '!!!!')
+  // console.log(token, '!!!!')
   // 3. 判断是否已经登录, 如果已经登录就放行, 否则强制跳转到登录界面
   if (!token) {
     return next('/login')

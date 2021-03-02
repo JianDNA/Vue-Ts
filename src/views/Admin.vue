@@ -11,55 +11,27 @@
     <el-container>
       <el-aside :width="isCollapse ? '65px' : '200px'">
         <el-menu
-          default-active="2"
           class="el-menu-vertical-demo"
           background-color="#fff"
           text-color="#666"
           active-text-color="deepskyblue"
           :collapse="isCollapse"
           :router="true"
-          :collapse-transition="false">
+          :collapse-transition="false"
+          :default-active="defaultActivePath">
           <!--一级菜单-->
-          <el-submenu index="1">
+          <el-submenu :index="item.menuName" v-for="item in menus" :key="item.menuName">
             <template slot="title">
-              <i class="el-icon-setting"></i>
-              <span>用户管理</span>
+              <i :class="item.icon"></i>
+              <span>{{item.menuName}}</span>
             </template>
             <!--二级菜单-->
             <el-menu-item-group>
-              <el-menu-item>
-                <el-menu-item index="/users">
-                  <template slot="title">
-                    <i class="el-icon-user"></i>
-                    <span>用户列表</span>
-                  </template>
-                </el-menu-item>
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-collection"></i>
-              <span>权限管理</span>
-            </template>
-            <!--二级菜单-->
-            <el-menu-item-group>
-              <el-menu-item>
-                <el-menu-item index="/roles">
-                  <template slot="title">
-                    <i class="el-icon-view"></i>
-                    <span>角色列表</span>
-                  </template>
-                </el-menu-item>
-              </el-menu-item>
-
-              <el-menu-item>
-                <el-menu-item index="/rights">
-                  <template slot="title">
-                    <i class="el-icon-unlock"></i>
-                    <span>权限列表</span>
-                  </template>
-                </el-menu-item>
+              <el-menu-item :index="subItem.path" v-for="subItem in item.children" :key="subItem.menuName"  @click="changeDefaultActivePath(subItem.path)">
+                <template slot="title">
+                  <i :class="subItem.icon"></i>
+                  <span>{{subItem.menuName}}</span>
+                </template>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -91,6 +63,38 @@ export default class Admin extends Vue {
       .catch(e => {
         console.log(e)
       })
+  }
+
+  private defaultActivePath = ''
+  private menus = [
+    {
+      menuName: '用户登录',
+      path: '',
+      icon: 'el-icon-setting',
+      children: [
+        { menuName: '用户列表', path: '/users', icon: 'el-icon-user', children: [] }
+      ]
+    },
+    {
+      menuName: '权限管理',
+      path: '',
+      icon: 'el-icon-collection',
+      children: [
+        { menuName: '角色列表', path: '/roles', icon: 'el-icon-view', children: [] },
+        { menuName: '权限列表', path: '/rights', icon: 'el-icon-unlock', children: [] }
+      ]
+    }
+  ]
+
+  private changeDefaultActivePath (path: string): void {
+    this.defaultActivePath = path
+    sessionStorage.setItem('activePath', path)
+  }
+
+  created (): void {
+    const path = sessionStorage.getItem('activePath')
+    this.defaultActivePath = path || ''
+    // console.log(this.userInfo);
   }
 
   private isCollapse = false;
@@ -138,16 +142,6 @@ export default class Admin extends Vue {
   }
   .el-aside{
     background: #fff;
-    .el-submenu{
-      li{
-        padding: 0;
-        ul{
-          >.el-menu-item{
-            padding-left: 0 !important;
-          }
-        }
-      }
-    }
   }
 }
 </style>
