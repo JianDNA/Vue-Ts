@@ -36,7 +36,7 @@ export default {
       })
         .then(function (response) {
           // console.log(response);
-          resolve(response.data)
+          resolve(response)
         })
         .catch(function (error) {
           // console.log(error);
@@ -49,7 +49,7 @@ export default {
       axios.post(path, data, { withCredentials: true })
         .then(function (response) {
           // console.log(response);
-          resolve(response.data)
+          resolve(response)
         })
         .catch(function (error) {
           // console.log(error);
@@ -62,7 +62,7 @@ export default {
       axios.delete(path, { data: data })
         .then(function (response) {
           // console.log(response);
-          resolve(response.data)
+          resolve(response)
         })
         .catch(function (error) {
           // console.log(error);
@@ -75,7 +75,7 @@ export default {
       axios.put(path, data)
         .then(function (response) {
           // console.log(response);
-          resolve(response.data)
+          resolve(response)
         })
         .catch(function (error) {
           // console.log(error);

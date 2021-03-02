@@ -133,7 +133,7 @@ export default class Login extends Vue {
         loginUser(this.loginData)
           .then((data: any) => {
             console.log(data)
-            if (data.code === 200) {
+            if (data.status === 200) {
               /*
               将jwt进行存储
               cookie: 体积不大

@@ -80,7 +80,7 @@
             <template slot-scope="scope">
               <!--            {{ scope.row.userState }}-->
               <el-switch
-                v-model="scope.row.userState"
+                v-model="scope.row.user_state"
                 active-color="#13ce66"
                 inactive-color="#ff4949"
                 @change="changeUserState(scope.row)">
@@ -112,7 +112,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-
+import { getUsers } from '../api/index'
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
   name: 'Users',
@@ -181,6 +181,17 @@ export default class Users extends Vue {
 
   private changeUserState (id: string) {
     console.log(id)
+  }
+
+  created (): void{
+    getUsers()
+      .then((response: any) => {
+        console.log(response.status, response.data)
+        this.tableData = response.data.data
+      })
+      .catch(error => {
+        (this as any).$message.error(error.response.data.msg)
+      })
   }
 }
 </script>

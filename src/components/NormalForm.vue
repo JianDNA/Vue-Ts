@@ -123,7 +123,7 @@ export default class NormalForm extends Vue {
         registerUser(this.registerData)
           .then((data: any) => {
             console.log(data)
-            if (data.code === 200) {
+            if (data.status === 200) {
               this.$router.push('/login')
             } else {
               this.updateCaptcha();
