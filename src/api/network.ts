@@ -57,9 +57,9 @@ export default {
         })
     })
   },
-  delete: function (path = '', data = {}) {
+  delete: function (path = '') {
     return new Promise(function (resolve, reject) {
-      axios.delete(path, { data: data })
+      axios.delete(path)
         .then(function (response) {
           // console.log(response);
           resolve(response)

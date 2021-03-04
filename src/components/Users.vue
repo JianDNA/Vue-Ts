@@ -140,7 +140,7 @@
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
-import { getUsers, createUsers } from '../api/index'
+import { getUsers, createUsers, deleteUsers } from '../api/index'
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
   name: 'Users',
@@ -151,24 +151,7 @@ export default class Users extends Vue {
     sessionStorage.removeItem('activePath')
   }
 
-  private tableData = [
-    {
-      username: 'hzj666',
-      email: 'vusn@qq.com',
-      phone: '15676385637',
-      roleName: '超级管理员',
-      avatarURL: '',
-      userState: true
-    },
-    {
-      username: 'hzj777',
-      email: 'vusn@qq.com',
-      phone: '15676385637',
-      roleName: '超级管理员',
-      avatarURL: '',
-      userState: true
-    }
-  ]
+  private tableData: any[] = []
 
   private searchData = {
     currentPage: 1,
@@ -271,7 +254,21 @@ export default class Users extends Vue {
   }
 
   private destroyUser (id: string) {
-    console.log(id)
+    deleteUsers(id)
+      .then((response: any) => {
+        if (response.status === 200) {
+          const idx = this.tableData.findIndex((obj) => {
+            return obj.id === id
+          })
+          this.tableData.splice(idx, 1);
+          (this as any).$message.success('删除用户成功')
+        } else {
+          (this as any).$message.error(response.data.msg)
+        }
+      })
+      .catch((error) => {
+        (this as any).$message.error(error.response.data.msg)
+      })
   }
 
   private showAddRoleDialog (id: string) {
@@ -288,7 +285,6 @@ export default class Users extends Vue {
       if (flag) {
         createUsers(this.userData)
           .then((response: any) => {
-            console.log(response, 666)
             if (response.status === 200) {
               const user = response.data.data
               this.tableData.push(user);

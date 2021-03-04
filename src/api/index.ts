@@ -8,3 +8,4 @@ export const isLogin = () => Network.get('/isLogin')
 
 export const getUsers = () => Network.get('/api/v1/users')
 export const createUsers = (data: {}) => Network.post('/api/v1/users', data)
+export const deleteUsers = (id: string) => Network.delete(`/api/v1/users/${id}`)
