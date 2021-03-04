@@ -7,3 +7,4 @@ export const loginUser = (data: {}) => Network.post('/login', data)
 export const isLogin = () => Network.get('/isLogin')
 
 export const getUsers = () => Network.get('/api/v1/users')
+export const createUsers = (data: {}) => Network.post('/api/v1/users', data)

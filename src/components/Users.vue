@@ -140,7 +140,7 @@
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
-import { getUsers } from '../api/index'
+import { getUsers, createUsers } from '../api/index'
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
   name: 'Users',
@@ -283,7 +283,27 @@ export default class Users extends Vue {
   }
 
   private createUser () {
-    console.log(66)
+    this.addUserDialogVisible = false
+    this.form!.validate((flag) => {
+      if (flag) {
+        createUsers(this.userData)
+          .then((response: any) => {
+            console.log(response, 666)
+            if (response.status === 200) {
+              const user = response.data.data
+              this.tableData.push(user);
+              (this as any).$message.success('添加用户成功')
+            } else {
+              (this as any).$message.error(response.data.msg)
+            }
+          })
+          .catch((error) => {
+            (this as any).$message.error(error.response.data.msg)
+          })
+      } else {
+        (this as any).$message.error('数据格式不对')
+      }
+    })
   }
 
   private changeUserState (id: string) {

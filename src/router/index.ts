@@ -50,7 +50,7 @@ router.beforeEach((to, from, next) => {
   // 2.其他路由: 获取当前登录状态
   // const token = sessionStorage.getItem('token')
   const token = Cookies.get('token')
-  // console.log(token, '!!!!')
+  console.log(token, '!!!!')
   // 3. 判断是否已经登录, 如果已经登录就放行, 否则强制跳转到登录界面
   if (!token) {
     return next('/login')
