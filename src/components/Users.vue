@@ -80,7 +80,7 @@
             <template slot-scope="scope">
               <!--            {{ scope.row.userState }}-->
               <el-switch
-                v-model="scope.row.user_state"
+                v-model="scope.row.userState"
                 active-color="#13ce66"
                 inactive-color="#ff4949"
                 @change="changeUserState(scope.row)">
@@ -145,11 +145,11 @@
           <el-form-item style="text-align: center">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="http://127.0.0.1:7001/api/v1/posts/"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload">
-              <img v-if="editData.avatarURL" :src="editData.avatarURL" class="avatar">
+              <img v-if="editData.avatarURL" :src="editData.baseURL + editData.avatarURL" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
@@ -365,7 +365,8 @@ export default class Users extends Vue {
     email: '',
     phone: '',
     password: '',
-    avatarURL: ''
+    avatarURL: '',
+    baseURL: ''
   }
 
   private editUserDialogVisible = false
@@ -422,7 +423,10 @@ export default class Users extends Vue {
    * @private
    */
   private handleAvatarSuccess (res: any, file: any) {
-    this.editData.avatarURL = res
+    console.log(res)
+    if (res.code === 200) {
+      this.editData.avatarURL = res.data
+    }
   }
 
   // 上传之前
