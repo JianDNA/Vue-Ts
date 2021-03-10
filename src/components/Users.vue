@@ -49,7 +49,15 @@
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="showAddUserDialog">添加用户</el-button>
-            <el-button type="primary"  @click="importUser">导入用户</el-button>
+            <el-upload
+              class="excel-upload"
+              action="https://127.0.0.1:7001/api/v1/importUser"
+              :on-success="handleExcelSuccess"
+              :before-upload="beforeExcelUpload"
+              :show-file-list="false"
+              :accept="'.xls'">
+              <el-button type="primary" >导入用户</el-button>
+            </el-upload>
           </el-col>
         </el-row>
         <!--中间的表格区域-->
@@ -148,7 +156,8 @@
               action="http://127.0.0.1:7001/api/v1/posts/"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload">
+              :before-upload="beforeAvatarUpload"
+              :accept="'.jpg'">
               <img v-if="editData.avatarURL" :src="editData.baseURL + editData.avatarURL" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -404,10 +413,6 @@ export default class Users extends Vue {
     this.editUserDialogVisible = true
   }
 
-  private importUser () {
-    console.log(66)
-  }
-
   private showAddRoleDialog (id: string) {
     console.log(id)
   }
@@ -459,6 +464,30 @@ export default class Users extends Vue {
     return isJPG && isLt2M
   }
 
+  // 上传excel相关代码
+  // 上传成功之后
+  private handleExcelSuccess (res: any) {
+    console.log(res)
+    if (res.code === 200) {
+      this.editData.avatarURL = res.data
+    }
+  }
+
+  // 上传之前
+  private beforeExcelUpload (file: any) {
+    console.log(file.size)
+    const isExcel = file.type === 'application/vnd.ms-excel'
+    const isLt2M = file.size / 1024 / 1024 < 2
+
+    if (!isExcel) {
+      (this as any).$message.error('只能上传.xls格式的 Excel 文件!')
+    }
+    if (!isLt2M) {
+      (this as any).$message.error('上传头像图片大小不能超过 2MB!')
+    }
+    return isExcel && isLt2M
+  }
+
   created (): void{
     getUsers()
       .then((response: any) => {
@@ -502,5 +531,9 @@ export default class Users extends Vue {
   width: 178px;
   height: 178px;
   display: block;
+}
+.excel-upload{
+  display: inline-block;
+  margin-left: 20px;
 }
 </style>
