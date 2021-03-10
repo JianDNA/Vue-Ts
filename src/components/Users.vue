@@ -114,7 +114,7 @@
         :visible.sync="addUserDialogVisible"
         @close="closeAddUserDialog"
         width="30%">
-        <el-form ref="form" :model="userData" :rules="addUserRules" label-width="0px">
+        <el-form ref="addForm" :model="userData" :rules="addUserRules" label-width="0px">
           <el-form-item prop="username">
             <el-input v-model="userData.username" prefix-icon="el-icon-user"></el-input>
           </el-form-item>
@@ -134,13 +134,41 @@
           <el-button type="primary" @click="createUser">确 定</el-button>
       </span>
       </el-dialog>
+
+      <!--编辑用户对话框-->
+      <el-dialog
+        title="编辑用户"
+        :visible.sync="editUserDialogVisible"
+        @close="closeAddUserDialog"
+        width="30%">
+        <el-form ref="editForm" :model="editData" :rules="editUserRules" label-width="0px">
+          <el-form-item prop="username">
+            <el-input v-model="editData.username" prefix-icon="el-icon-user"></el-input>
+          </el-form-item>
+          <el-form-item prop="email">
+            <el-input v-model="editData.email" prefix-icon="el-icon-message"></el-input>
+          </el-form-item>
+          <el-form-item prop="phone">
+            <el-input v-model="editData.phone" prefix-icon="el-icon-phone-outline"></el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="editData.password" prefix-icon="el-icon-lock"></el-input>
+          </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editUserDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editUser">确 定</el-button>
+      </span>
+      </el-dialog>
+
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
-import { getUsers, createUsers, deleteUsers } from '../api/index'
+import { getUsers, createUsers, deleteUsers, updateUsers } from '../api/index'
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
   name: 'Users',
@@ -161,15 +189,6 @@ export default class Users extends Vue {
     key: '',
     pageSize: 5
   }
-
-  private userData = {
-    username: '',
-    email: '',
-    phone: '',
-    password: ''
-  }
-
-  private addUserDialogVisible = false
 
   // 校验规则相关
   private validateName = (rule: any, value: any, callback: any) => {
@@ -207,6 +226,19 @@ export default class Users extends Vue {
     }
   };
 
+  private validatePassword2 = (rule: any, value: any, callback: any) => {
+    const reg = /(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{8,20}$/
+    if (value) {
+      if (value.length < 8) {
+        callback(new Error('密码名应该是8-20位!'))
+      } else if (!reg.test(value)) {
+        callback(new Error('至少包含数字跟字母，可以有符号'))
+      }
+    } else {
+      callback()
+    }
+  };
+
   private validatePhone = (rule: any, value: any, callback: any) => {
     const reg = /^1[3456789]\d{9}/
     if (value && !reg.test(value)) {
@@ -216,6 +248,15 @@ export default class Users extends Vue {
     }
   };
 
+  private onSubmit () {
+    console.log(66)
+  }
+
+  private exportUsers () {
+    console.log(66)
+  }
+
+  // 添加用户相关
   private addUserRules = {
     username: [
       { validator: this.validateName, trigger: 'blur' }
@@ -231,57 +272,23 @@ export default class Users extends Vue {
     ]
   }
 
-  private onSubmit () {
-    console.log(66)
+  private userData = {
+    username: '',
+    email: '',
+    phone: '',
+    password: ''
   }
 
-  private exportUsers () {
-    console.log(66)
-  }
-
-  @Ref() readonly form?: ElForm
+  private addUserDialogVisible = false
+  @Ref() readonly addForm?: ElForm
   private showAddUserDialog () {
     this.addUserDialogVisible = true
-    this.form && this.form.resetFields()
-  }
-
-  private importUser () {
-    console.log(66)
-  }
-
-  private showEditUserDialog (row: string) {
-    console.log(row)
-  }
-
-  private destroyUser (id: string) {
-    deleteUsers(id)
-      .then((response: any) => {
-        if (response.status === 200) {
-          const idx = this.tableData.findIndex((obj) => {
-            return obj.id === id
-          })
-          this.tableData.splice(idx, 1);
-          (this as any).$message.success('删除用户成功')
-        } else {
-          (this as any).$message.error(response.data.msg)
-        }
-      })
-      .catch((error) => {
-        (this as any).$message.error(error.response.data.msg)
-      })
-  }
-
-  private showAddRoleDialog (id: string) {
-    console.log(id)
-  }
-
-  private closeAddUserDialog () {
-    console.log(66)
+    this.addForm && this.addForm.resetFields()
   }
 
   private createUser () {
     this.addUserDialogVisible = false
-    this.form!.validate((flag) => {
+    this.addForm!.validate((flag) => {
       if (flag) {
         createUsers(this.userData)
           .then((response: any) => {
@@ -300,6 +307,94 @@ export default class Users extends Vue {
         (this as any).$message.error('数据格式不对')
       }
     })
+  }
+
+  private closeAddUserDialog () {
+    console.log(66)
+  }
+
+  // 删除用户相关
+  private destroyUser (id: string) {
+    deleteUsers(id)
+      .then((response: any) => {
+        if (response.status === 200) {
+          const idx = this.tableData.findIndex((obj) => {
+            return obj.id === id
+          })
+          this.tableData.splice(idx, 1);
+          (this as any).$message.success('删除用户成功')
+        } else {
+          (this as any).$message.error(response.data.msg)
+        }
+      })
+      .catch((error) => {
+        (this as any).$message.error(error.response.data.msg)
+      })
+  }
+
+  // 编辑用户相关
+  private editUserRules = {
+    username: [
+      { validator: this.validateName, trigger: 'blur' }
+    ],
+    password: [
+      { validator: this.validatePassword2, trigger: 'blur' }
+    ],
+    email: [
+      { validator: this.validateEmail, trigger: 'blur' }
+    ],
+    phone: [
+      { validator: this.validatePhone, trigger: 'blur' }
+    ]
+  }
+
+  private editData = {
+    id: '',
+    username: '',
+    email: '',
+    phone: '',
+    password: ''
+  }
+
+  private editUserDialogVisible = false
+  @Ref() readonly editForm?: ElForm
+  private editUser () {
+    this.editUserDialogVisible = false
+    this.editForm!.validate((flag) => {
+      if (flag) {
+        updateUsers(this.editData.id, this.editData)
+          .then((response: any) => {
+            if (response.status === 200) {
+              const idx = this.tableData.findIndex(item => {
+                return item.id === this.editData.id
+              })
+              // this.tableData[idx] = this.editData;
+              this.$set(this.tableData, idx, this.editData);
+              (this as any).$message.success('更新用户成功')
+            } else {
+              (this as any).$message.error(response.data.msg)
+            }
+          })
+          .catch((error) => {
+            (this as any).$message.error(error.response.data.msg[0].message)
+          })
+      } else {
+        (this as any).$message.error('数据格式不对')
+      }
+    })
+  }
+
+  private showEditUserDialog (row: any) {
+    Object.assign(this.editData, row)
+    this.editUserDialogVisible = true
+  }
+
+  private importUser () {
+    console.log(66)
+  }
+
+  private showAddRoleDialog (id: string) {
+    console.log(id)
   }
 
   private changeUserState (id: string) {
