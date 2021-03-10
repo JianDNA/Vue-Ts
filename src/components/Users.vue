@@ -12,7 +12,7 @@
       <el-card class="box-card">
         <!--头部搜索区-->
         <el-row>
-          <el-col :span="20">
+          <el-col :span="18">
             <div class="grid-content bg-purple">
               <el-form :inline="true" :model="searchData" class="demo-form-inline">
                 <el-form-item label="">
@@ -47,17 +47,20 @@
               </el-form>
             </div>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-button type="primary" @click="showAddUserDialog">添加用户</el-button>
             <el-upload
               class="excel-upload"
-              action="https://127.0.0.1:7001/api/v1/importUser"
+              action="http://127.0.0.1:7001/api/v1/importUser"
               :on-success="handleExcelSuccess"
               :before-upload="beforeExcelUpload"
               :show-file-list="false"
               :accept="'.xls'">
               <el-button type="primary" >导入用户</el-button>
             </el-upload>
+            <a href="https://127.0.0.1:7001/api/v1/exportUser">
+              <el-button type="primary" >导出所有用户</el-button>
+            </a>
           </el-col>
         </el-row>
         <!--中间的表格区域-->
