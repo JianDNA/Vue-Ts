@@ -149,7 +149,7 @@ export default class Login extends Vue {
           })
           .catch((e) => {
             this.updateCaptcha();
-            (this as any).$message.error(e.message)
+            (this as any).$message.error(e.response.data.msg)
           })
       } else {
         (this as any).$message.error('数据格式不对')

@@ -299,6 +299,7 @@ export default class Users extends Vue {
 
   private createUser () {
     this.addUserDialogVisible = false
+    // eslint-disable-next-line
     this.addForm!.validate((flag) => {
       if (flag) {
         createUsers(this.userData)
@@ -373,6 +374,7 @@ export default class Users extends Vue {
   @Ref() readonly editForm?: ElForm
   private editUser () {
     this.editUserDialogVisible = false
+    // eslint-disable-next-line
     this.editForm!.validate((flag) => {
       if (flag) {
         updateUsers(this.editData.id, this.editData)
@@ -410,8 +412,22 @@ export default class Users extends Vue {
     console.log(id)
   }
 
-  private changeUserState (id: string) {
-    console.log(id)
+  // 修改用户状态相关
+  private changeUserState (user: {id: string; userState: boolean}) {
+    console.log(user)
+    updateUsers(user.id, user)
+      .then((response: any) => {
+        if (response.status === 200) {
+          (this as any).$message.success('更新用户状态成功')
+        } else {
+          user.userState = !user.userState;
+          (this as any).$message.error('更新用户状态失败')
+        }
+      })
+      .catch(() => {
+        user.userState = !user.userState;
+        (this as any).$message.error('更新用户状态失败')
+      })
   }
 
   // 上传用户头像相关
@@ -422,7 +438,7 @@ export default class Users extends Vue {
    * @param file  上传成功后返回的文件对象
    * @private
    */
-  private handleAvatarSuccess (res: any, file: any) {
+  private handleAvatarSuccess (res: any) {
     console.log(res)
     if (res.code === 200) {
       this.editData.avatarURL = res.data
@@ -435,10 +451,10 @@ export default class Users extends Vue {
     const isLt2M = file.size / 1024 / 1024 < 2
 
     if (!isJPG) {
-      this.$message.error('上传头像图片只能是 JPG 格式!')
+      (this as any).$message.error('上传头像图片只能是 JPG 格式!')
     }
     if (!isLt2M) {
-      this.$message.error('上传头像图片大小不能超过 2MB!')
+      (this as any).$message.error('上传头像图片大小不能超过 2MB!')
     }
     return isJPG && isLt2M
   }
