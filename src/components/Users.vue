@@ -142,6 +142,17 @@
         @close="closeAddUserDialog"
         width="30%">
         <el-form ref="editForm" :model="editData" :rules="editUserRules" label-width="0px">
+          <el-form-item style="text-align: center">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="editData.avatarURL" :src="editData.avatarURL" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
           <el-form-item prop="username">
             <el-input v-model="editData.username" prefix-icon="el-icon-user"></el-input>
           </el-form-item>
@@ -353,7 +364,8 @@ export default class Users extends Vue {
     username: '',
     email: '',
     phone: '',
-    password: ''
+    password: '',
+    avatarURL: ''
   }
 
   private editUserDialogVisible = false
@@ -401,6 +413,32 @@ export default class Users extends Vue {
     console.log(id)
   }
 
+  // 上传用户头像相关
+  // 上传成功之后
+  /**
+   *
+   * @param res   服务器返回数据
+   * @param file  上传成功后返回的文件对象
+   * @private
+   */
+  private handleAvatarSuccess (res: any, file: any) {
+    this.editData.avatarURL = res
+  }
+
+  // 上传之前
+  private beforeAvatarUpload (file: any) {
+    const isJPG = file.type === 'image/jpeg'
+    const isLt2M = file.size / 1024 / 1024 < 2
+
+    if (!isJPG) {
+      this.$message.error('上传头像图片只能是 JPG 格式!')
+    }
+    if (!isLt2M) {
+      this.$message.error('上传头像图片大小不能超过 2MB!')
+    }
+    return isJPG && isLt2M
+  }
+
   created (): void{
     getUsers()
       .then((response: any) => {
@@ -420,5 +458,29 @@ export default class Users extends Vue {
 }
 .el-pagination{
   padding-top: 20px;
+}
+.avatar-uploader {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.avatar-uploader:hover {
+  border-color: #409EFF;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>
