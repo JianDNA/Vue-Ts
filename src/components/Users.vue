@@ -208,7 +208,7 @@ export default class Users extends Vue {
   private tableData: any[] = []
 
   private searchData = {
-    currentPage: 2,
+    currentPage: 1,
     role: '',
     origin: '',
     type: '',
@@ -304,8 +304,10 @@ export default class Users extends Vue {
     }
   };
 
+  // 查询用户
   private onSubmit () {
-    console.log(66)
+    this.searchData.currentPage = 1
+    this.getUserList()
   }
 
   private exportUsers () {
