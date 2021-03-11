@@ -116,7 +116,7 @@
         :current-page="searchData.currentPage"
         :page-sizes="[5, 10, 20, 50]"
         :page-size="searchData.pageSize"
-        :total="400"
+        :total="totalCount"
         layout="total, sizes, prev, pager, next, jumper"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange">
@@ -214,6 +214,36 @@ export default class Users extends Vue {
     type: '',
     key: '',
     pageSize: 5
+  }
+
+  private totalCount = 0
+  // 分页相关
+  private getUserList () {
+    getUsers(this.searchData)
+      .then((response: any) => {
+        // console.log(response.status, response.data)
+        this.tableData = response.data.data.users
+        this.totalCount = response.data.data.totalCount
+      })
+      .catch(error => {
+        (this as any).$message.error(error.response.data.msg)
+      })
+  }
+
+  created (): void{
+    this.getUserList()
+  }
+
+  private handleCurrentChange (currentPage: any) {
+    // console.log(currentPage)
+    this.searchData.currentPage = currentPage
+    this.getUserList()
+  }
+
+  private handleSizeChange (currentSize: any) {
+    // console.log(currentSize)
+    this.searchData.pageSize = currentSize
+    this.getUserList()
   }
 
   // 校验规则相关
@@ -492,28 +522,6 @@ export default class Users extends Vue {
       (this as any).$message.error('上传头像图片大小不能超过 2MB!')
     }
     return isExcel && isLt2M
-  }
-
-  // 分页相关
-  private handleCurrentChange (currentSize: any) {
-    // console.log(currentSize)
-    this.searchData.pageSize = currentSize
-  }
-
-  private handleSizeChange (currentPage: any) {
-    // console.log(currentPage)
-    this.searchData.currentPage = currentPage
-  }
-
-  created (): void{
-    getUsers()
-      .then((response: any) => {
-        // console.log(response.status, response.data)
-        this.tableData = response.data.data
-      })
-      .catch(error => {
-        (this as any).$message.error(error.response.data.msg)
-      })
   }
 }
 </script>
