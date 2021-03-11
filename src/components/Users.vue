@@ -58,7 +58,7 @@
               :accept="'.xls'">
               <el-button type="primary" >导入用户</el-button>
             </el-upload>
-            <a href="https://127.0.0.1:7001/api/v1/exportUser">
+            <a href="http://127.0.0.1:7001/api/v1/exportUser" style="margin-left: 20px">
               <el-button type="primary" >导出所有用户</el-button>
             </a>
           </el-col>
@@ -113,10 +113,13 @@
 
       <!--底部分页-->
       <el-pagination
+        :current-page="searchData.currentPage"
         :page-sizes="[5, 10, 20, 50]"
-        :page-size="100"
+        :page-size="searchData.pageSize"
         :total="400"
-        layout="total, sizes, prev, pager, next, jumper">
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange">
       </el-pagination>
 
       <!--添加用户对话框-->
@@ -205,7 +208,7 @@ export default class Users extends Vue {
   private tableData: any[] = []
 
   private searchData = {
-    currentPage: 1,
+    currentPage: 2,
     role: '',
     origin: '',
     type: '',
@@ -489,6 +492,17 @@ export default class Users extends Vue {
       (this as any).$message.error('上传头像图片大小不能超过 2MB!')
     }
     return isExcel && isLt2M
+  }
+
+  // 分页相关
+  private handleCurrentChange (currentSize: any) {
+    // console.log(currentSize)
+    this.searchData.pageSize = currentSize
+  }
+
+  private handleSizeChange (currentPage: any) {
+    // console.log(currentPage)
+    this.searchData.currentPage = currentPage
   }
 
   created (): void{
