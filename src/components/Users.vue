@@ -195,6 +195,8 @@
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
 import { getUsers, createUsers, deleteUsers, updateUsers } from '../api/index'
+import XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
   name: 'Users',
@@ -311,7 +313,37 @@ export default class Users extends Vue {
   }
 
   private exportUsers () {
-    console.log(66)
+    const user = this.tableData.length ? this.tableData[0] : null
+    // console.log(user, '-------');
+    const data: any[] = []
+    if (user) {
+      const cloumTitles = Object.keys(user)
+      data.push(cloumTitles)
+      this.tableData.forEach(user => {
+        const temp: any[] = []
+        cloumTitles.forEach(key => {
+          temp.push(user[key])
+        })
+        data.push(temp)
+      })
+      // console.log(data)
+      // 1.根据二维数组生成表格数据
+      const sheet = XLSX.utils.aoa_to_sheet(data)
+      // console.log(sheet)
+      // 2.创建一个新的表格
+      const workbook = XLSX.utils.book_new()
+      // 3.把数据添加到表格中并给表格起一个名称
+      XLSX.utils.book_append_sheet(workbook, sheet, 'users')
+      // 4.将生成好的表格保存到本地
+      // XLSX.writeFile(workbook, 'users.xls')    // 有兼容问题
+      /* bookType can be any supported output type */
+      const wopts: any = { bookType: 'xlsx', bookSST: false, type: 'array' }
+
+      const wbout = XLSX.write(workbook, wopts)
+
+      /* the saveAs call downloads a file on the local machine */
+      saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'users.xlsx')
+    }
   }
 
   // 添加用户相关

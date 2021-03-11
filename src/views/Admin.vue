@@ -46,7 +46,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { getUsers } from '../api/index'
 import Cookies from 'js-cookie'
 @Component({
 // 如果在类中找不到需要添加的内容,name就可以写在这个地方
@@ -56,13 +55,6 @@ import Cookies from 'js-cookie'
 export default class Admin extends Vue {
   private myFn () {
     console.log(66)
-    getUsers()
-      .then(data => {
-        console.log(data)
-      })
-      .catch(e => {
-        console.log(e)
-      })
   }
 
   private defaultActivePath = ''
