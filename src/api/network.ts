@@ -8,7 +8,7 @@ axios.defaults.timeout = 3000
 // 让axios在请求头中带上cookie
 axios.defaults.withCredentials = true
 const CancelToken = axios.CancelToken
-const source = CancelToken.source()
+// const source = CancelToken.source()
 
 // 拦截器
 // 请求拦截器
