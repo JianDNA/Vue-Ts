@@ -141,6 +141,9 @@ export default class Login extends Vue {
               localStorage: 体积较大且需要持久存储
                */
               // sessionStorage.setItem('token', data.data.token)
+              // console.log(data.data.data)
+              // 保存登录状态
+              sessionStorage.setItem('userInfo', JSON.stringify(data.data.data))
               this.$router.push('/admin')
             } else {
               this.updateCaptcha();

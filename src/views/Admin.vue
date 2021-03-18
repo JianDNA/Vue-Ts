@@ -3,8 +3,8 @@
     <el-header>
       <div class="header-left" @click="toggleCollapse"></div>
       <div class="header-right">
-        <img src="../assets/avatar.jpg"  alt="">
-        <p>hzj</p>
+        <img :src="userInfo.baseURL + userInfo.avatarURL"  alt="">
+        <p>{{userInfo.username || userInfo.emacr || userInfo.phone}}</p>
         <el-button @click.stop="logout">退出</el-button>
       </div>
     </el-header>
@@ -82,20 +82,24 @@ export default class Admin extends Vue {
     this.defaultActivePath = path
     sessionStorage.setItem('activePath', path)
   }
-
+  private userInfo = {}
   created (): void {
     const path = sessionStorage.getItem('activePath')
     this.defaultActivePath = path || ''
     // console.log(this.userInfo);
+    const userInfo = sessionStorage.getItem('userInfo')
+    if (userInfo) {
+      this.userInfo = JSON.parse(userInfo)
+    }
   }
-
   private isCollapse = false;
   private toggleCollapse () {
     this.isCollapse = !this.isCollapse
   }
-
   private logout () {
     Cookies.remove('token')
+    sessionStorage.removeItem('activePath')
+    sessionStorage.removeItem('userInfo')
     this.$router.push('/login')
   }
 }
