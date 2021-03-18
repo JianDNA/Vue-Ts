@@ -26,3 +26,7 @@ export const getRights = (data: {}) => Network.get('/api/v1/rights', data)
 export const createRights = (data: {}) => Network.post('/api/v1/rights', data)
 export const destroyRights = (id: string) => Network.delete(`/api/v1/rights/${id}`)
 export const updateRights = (id: string, data: {}) => Network.put(`/api/v1/rights/${id}`, data)
+
+// 分配角色相关
+export const createRoleRights = (data: {}) => Network.post('/api/v1/roleRights', data)
+export const destroyRoleRights = (roleId: string, data: {}) => Network.delete(`/api/v1/roleRights/${roleId}`, data)

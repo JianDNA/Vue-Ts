@@ -27,6 +27,23 @@
         style="width: 100%"
         :border="true"
         :stripe="true">
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-row v-for="(item1, index1) in scope.row.rightsTree" :key="item1.id" :class="['bottom-border', index1 === 0 ? 'top-border' : '', 'content-center']">
+              <el-col :span="6">
+                <el-tag type="danger">{{item1.rightsName}}</el-tag>
+              </el-col>
+              <el-col :span="18">
+                <el-row v-for="(item2) in item1.children" :key="item2.id" :class="[index2 !== 0 ? 'bottom-border' : '', 'content-center']">
+                  <el-col :span="6"><el-tag type="warning">{{item2.rightsName}}</el-tag></el-col>
+                  <el-col :span="18">
+                    <el-tag type="success" v-for="(item3) in item2.children" :key="item3.id">{{item3.rightsName}}</el-tag>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
         <el-table-column type="index">
         </el-table-column>
         <el-table-column
@@ -125,7 +142,7 @@
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
 import { ElTree } from 'element-ui/types/tree'
-import { getRoles, createRoles, updateRoles, destroyRoles, getRights } from '../api/index'
+import { getRoles, createRoles, updateRoles, destroyRoles, getRights, createRoleRights, destroyRoleRights } from '../api/index'
 
 @Component({
   name: 'Roles',
@@ -137,78 +154,84 @@ export default class Roles extends Vue {
   };
 
   // 添加权限相关代码
-  // 树形控件需要显示的数据
   @Ref() readonly tree?: ElTree<any, any>;
-  private rightsArray = [
-    {
-      label: '一级 1',
+  private rightsArray = [{
+    label: '一级 1',
+    children: [{
+      label: '二级 1-1',
       children: [{
-        label: '二级 1-1',
-        children: [{
-          label: '三级 1-1-1'
-        }]
-      }]
-    }, {
-      label: '一级 2',
-      children: [{
-        label: '二级 2-1',
-        children: [{
-          label: '三级 2-1-1'
-        }]
-      }, {
-        label: '二级 2-2',
-        children: [{
-          label: '三级 2-2-1'
-        }]
-      }]
-    }, {
-      label: '一级 3',
-      children: [{
-        label: '二级 3-1',
-        children: [{
-          label: '三级 3-1-1'
-        }]
-      }, {
-        label: '二级 3-2',
-        children: [{
-          label: '三级 3-2-1'
-        }]
+        label: '三级 1-1-1'
       }]
     }]
-
-  private defaultCheckedKeys = [44, 46] // 指定默认选中的权限
-
+  }] // 树形控件需要显示的数据
+  private defaultCheckedKeys: any = [] // 指定默认选中的权限
   // 显示的内容
   private defaultProps = {
     children: 'children',
     label: 'rightsName'
   }
-
   private addRightsDialogVisible = false
-  private showAddRightsDialog () {
+  private currentRole: any = {}
+  private showAddRightsDialog (role: any) {
     this.addRightsDialogVisible = true
+    // 清空上一次的选项
+    this.defaultCheckedKeys = []
+    this.currentRole = role
+    this.currentRole.rights.forEach((item: any) => {
+      if (item.level === 2) {
+        // 如果你是三级权限,就添加
+        this.defaultCheckedKeys.push(item.id)
+      }
+    })
     this.tree && this.tree.setCheckedKeys(this.defaultCheckedKeys)
   }
-
   private addRights () {
     this.addRightsDialogVisible = false
     // 1.获取当前所有选中和半选中的权限
     // console.log(this.tree!.getCheckedKeys()) // 选中的
     // console.log(this.tree!.getHalfCheckedKeys()) // 半选中的
     const allCheckedKeys = [...this.tree!.getCheckedKeys(), ...this.tree!.getHalfCheckedKeys()]
-    console.log('原有的', allCheckedKeys)
+    // console.log('原有的', allCheckedKeys)
     // 2.获取新增的权限
     const addCheckedKeys = allCheckedKeys.filter(id => {
       return !this.defaultCheckedKeys.includes(id)
     })
-    console.log('新增的', addCheckedKeys)
+    // console.log('新增的', addCheckedKeys)
     // 3.获取删除的的原有的里面删除掉现在的
-    const removeCheckedKeys = this.defaultCheckedKeys.filter(id => {
+    const removeCheckedKeys = this.defaultCheckedKeys.filter((id: any) => {
       return !allCheckedKeys.includes(id)
     })
-    console.log('删除的', removeCheckedKeys)
+    // console.log('删除的', removeCheckedKeys)
+    // 4.新增权限
+    if (addCheckedKeys.length > 0) {
+      createRoleRights({ roleId: this.currentRole.id, rightsIds: addCheckedKeys })
+        .then((response: any) => {
+          if (response.status === 200) {
+            (this as any).$message.success('添加权限列表成功')
+          } else {
+            (this as any).$message.error(response.data.msg)
+          }
+        })
+        .catch((error) => {
+          (this as any).$message.error(error.response.data.msg)
+        })
+    }
+    // 5.移除权限
+    if (removeCheckedKeys.length > 0) {
+      destroyRoleRights(this.currentRole.id, { rightsIds: removeCheckedKeys })
+        .then((response: any) => {
+          if (response.status === 200) {
+            (this as any).$message.success('移除权限列表成功')
+          } else {
+            (this as any).$message.error(response.data.msg)
+          }
+        })
+        .catch((error) => {
+          (this as any).$message.error(error.response.data.msg)
+        })
+    }
+    setTimeout(() => { this.getRoleList() }, 500)
   }
-
   private getRightsList () {
     getRights({})
       .then((response: any) => {
@@ -225,6 +248,7 @@ export default class Roles extends Vue {
       })
   }
 
+
   // 搜索相关代码
   private tableData: any[] = [];
   private searchData = {
@@ -232,12 +256,13 @@ export default class Roles extends Vue {
     currentPage: 1,
     pageSize: 5
   };
-
   private onSubmit () {
     this.getRoleList()
   };
 
+
   // 添加角色相关代码
+  @Ref() readonly form?: ElForm;
   private addRoleRules = {
     roleName: [
       { required: true, message: '请输入角色名称', trigger: 'blur' },
@@ -248,21 +273,16 @@ export default class Roles extends Vue {
       { min: 1, message: '长度至少1个字符', trigger: 'blur' }
     ]
   };
-
   private addRoleDialogVisible = false;
   private roleData = {
     roleName: '',
     roleDesc: '',
     roleState: true
   };
-
-  @Ref() readonly form?: ElForm;
-
   private showAddRoleDialog (): void {
     this.addRoleDialogVisible = true
     this.form && this.form.resetFields()
   }
-
   private createRole () {
     this.addRoleDialogVisible = false
     this.form!.validate((flag) => {
@@ -286,6 +306,7 @@ export default class Roles extends Vue {
     })
   };
 
+
   // 编辑角色相关代码
   private editRoleDialogVisible = false;
   private editData = {
@@ -294,13 +315,11 @@ export default class Roles extends Vue {
     roleDesc: '',
     roleState: ''
   }
-
   private showEditRoleDialog (role: any) {
     this.editRoleDialogVisible = true
     this.form && this.form.resetFields()
     this.editData = Object.assign(this.editData, role)
   }
-
   private editRole () {
     this.editRoleDialogVisible = false
     this.form!.validate((flag) => {
@@ -326,6 +345,7 @@ export default class Roles extends Vue {
     })
   }
 
+
   // 修改角色状态相关代码
   private changeRoleState (user: any) {
     updateRoles(user.id, user)
@@ -341,6 +361,7 @@ export default class Roles extends Vue {
         }
       })
   }
+
 
   // 删除角色相关代码
   private destroyRole (id: string) {
@@ -364,7 +385,6 @@ export default class Roles extends Vue {
 
   // 分页相关代码
   private totalCount = 0;
-
   private getRoleList () {
     getRoles(this.searchData)
       .then((response: any) => {
@@ -379,17 +399,14 @@ export default class Roles extends Vue {
         (this as any).$message.error(error.response.data.msg)
       })
   }
-
   created (): void {
     this.getRoleList()
     this.getRightsList()
   }
-
   private handleSizeChange (currentSize: any) {
     this.searchData.pageSize = currentSize
     this.getRoleList()
   }
-
   private handleCurrentChange (currentPage: any) {
     this.searchData.currentPage = currentPage
     this.getRoleList()
@@ -413,5 +430,18 @@ export default class Roles extends Vue {
 
 .el-pagination {
   padding-top: 20px;
+}
+.el-tag{
+  margin: 10px;
+}
+.top-border{
+  border-top: 1px solid #ccc;
+}
+.bottom-border{
+  border-bottom: 1px solid #ccc;
+}
+.content-center{
+  display: flex;
+  align-items: center;
 }
 </style>
