@@ -188,6 +188,19 @@
       </span>
       </el-dialog>
 
+      <!--分配角色对话框-->
+      <el-dialog
+        title="分配角色"
+        :visible.sync="addRoleDialogVisible"
+        width="30%"
+        >
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="addRoleDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addRoleDialogVisible = false">确 定</el-button>
+  </span>
+      </el-dialog>
+
     </div>
 </template>
 
@@ -483,10 +496,6 @@ export default class Users extends Vue {
     this.editUserDialogVisible = true
   }
 
-  private showAddRoleDialog (id: string) {
-    console.log(id)
-  }
-
   // 修改用户状态相关
   private changeUserState (user: {id: string; userState: boolean}) {
     console.log(user)
@@ -556,6 +565,14 @@ export default class Users extends Vue {
       (this as any).$message.error('上传头像图片大小不能超过 2MB!')
     }
     return isExcel && isLt2M
+  }
+
+  // 分配角色相关
+  private addRoleDialogVisible = false
+
+  private showAddRoleDialog (user: any) {
+    this.addRoleDialogVisible = true
+    console.log(user)
   }
 }
 </script>

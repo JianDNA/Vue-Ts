@@ -60,7 +60,7 @@ export default class Admin extends Vue {
   private defaultActivePath = ''
   private menus = [
     {
-      menuName: '用户登录',
+      menuName: '用户管理',
       path: '',
       icon: 'el-icon-setting',
       children: [
