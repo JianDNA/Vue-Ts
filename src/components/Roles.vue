@@ -51,7 +51,9 @@
           <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-edit" @click="showEditRoleDialog(scope.row)"></el-button>
             <el-button type="danger" icon="el-icon-delete" @click="destroyRole(scope.row.id)"></el-button>
-            <el-button type="warning" icon="el-icon-setting" @click="showAddRightsDialog(scope.row)"></el-button>
+            <el-tooltip class="item" effect="dark" content="分配权限" placement="top" :enterable="false">
+              <el-button type="warning" icon="el-icon-setting" @click="showAddRightsDialog(scope.row)"></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -110,7 +112,7 @@
       title="添加权限"
       :visible.sync="addRightsDialogVisible"
       width="30%">
-      <el-tree :data="data" :props="defaultProps"></el-tree>
+      <el-tree :data="rightsArray" :props="defaultProps" :default-expand-all="true" show-checkbox></el-tree>
       <span slot="footer" class="dialog-footer">
     <el-button @click="addRightsDialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="addRightsDialogVisible = false">确 定</el-button>
@@ -122,7 +124,7 @@
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
-import { getRoles, createRoles, updateRoles, destroyRoles } from '../api/index'
+import { getRoles, createRoles, updateRoles, destroyRoles, getRights } from '../api/index'
 
 @Component({
   name: 'Roles',
@@ -135,7 +137,7 @@ export default class Roles extends Vue {
 
   // 添加权限相关代码
   // 树形控件需要显示的数据
-  private data = [
+  private rightsArray = [
     {
       label: '一级 1',
       children: [{
@@ -175,12 +177,28 @@ export default class Roles extends Vue {
   // 显示的内容
   private defaultProps = {
     children: 'children',
-    label: 'label'
+    label: 'rightsName'
   }
 
   private addRightsDialogVisible = false
   private showAddRightsDialog () {
     this.addRightsDialogVisible = true
+  }
+
+  private getRightsList () {
+    getRights({})
+      .then((response: any) => {
+        if (response.status === 200) {
+          console.log(response.data.data)
+          this.rightsArray = response.data.data;
+          (this as any).$message.success('获取权限列表成功')
+        } else {
+          (this as any).$message.error(response.data.msg)
+        }
+      })
+      .catch((error) => {
+        (this as any).$message.error(error.response.data.msg)
+      })
   }
 
   // 搜索相关代码
@@ -340,6 +358,7 @@ export default class Roles extends Vue {
 
   created (): void {
     this.getRoleList()
+    this.getRightsList()
   }
 
   private handleSizeChange (currentSize: any) {
