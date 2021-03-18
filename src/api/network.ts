@@ -57,15 +57,14 @@ export default {
         })
     })
   },
-  delete: function (path = '') {
+  delete: function (path = '', data = {}) {
     return new Promise(function (resolve, reject) {
-      axios.delete(path)
+      // axios的 delete 方法的body传参需要给一个对象
+      axios.delete(path, { data: data })
         .then(function (response) {
-          // console.log(response);
           resolve(response)
         })
         .catch(function (error) {
-          // console.log(error);
           reject(error)
         })
     })

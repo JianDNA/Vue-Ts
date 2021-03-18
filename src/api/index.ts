@@ -16,7 +16,10 @@ export const getRoles = (data: {}) => Network.get('/api/v1/roles', data)
 export const createRoles = (data: {}) => Network.post('/api/v1/roles', data)
 export const destroyRoles = (id: string) => Network.delete(`/api/v1/roles/${id}`)
 export const updateRoles = (id: string, data: {}) => Network.put(`/api/v1/roles/${id}`, data)
-
+// 分配角色相关
+// 分配角色相关
+export const createUserRole = (data: {}) => Network.post('/api/v1/userrole', data)
+export const destroyUserRole = (userId: string, data: {}) => Network.delete(`/api/v1/userrole/${userId}`, data)
 // 权限管理相关
 export const getRights = (data: {}) => Network.get('/api/v1/rights', data)
 // export const getRightsCategory = (type:string,data:{})=>Network.get(`/api/v1/rights/${type}`, data);

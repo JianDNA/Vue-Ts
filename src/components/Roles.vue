@@ -112,10 +112,10 @@
       title="添加权限"
       :visible.sync="addRightsDialogVisible"
       width="30%">
-      <el-tree :data="rightsArray" :props="defaultProps" :default-expand-all="true" show-checkbox></el-tree>
+      <el-tree :data="rightsArray" :props="defaultProps" :default-expand-all="true" show-checkbox ref="tree" node-key="id" :default-checked-keys="defaultCheckedKeys"></el-tree>
       <span slot="footer" class="dialog-footer">
     <el-button @click="addRightsDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addRightsDialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="addRights">确 定</el-button>
   </span>
     </el-dialog>
   </div>
@@ -124,6 +124,7 @@
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
+import { ElTree } from 'element-ui/types/tree'
 import { getRoles, createRoles, updateRoles, destroyRoles, getRights } from '../api/index'
 
 @Component({
@@ -137,6 +138,7 @@ export default class Roles extends Vue {
 
   // 添加权限相关代码
   // 树形控件需要显示的数据
+  @Ref() readonly tree?: ElTree<any, any>;
   private rightsArray = [
     {
       label: '一级 1',
@@ -174,6 +176,8 @@ export default class Roles extends Vue {
       }]
     }]
 
+  private defaultCheckedKeys = [44, 46] // 指定默认选中的权限
+
   // 显示的内容
   private defaultProps = {
     children: 'children',
@@ -183,6 +187,26 @@ export default class Roles extends Vue {
   private addRightsDialogVisible = false
   private showAddRightsDialog () {
     this.addRightsDialogVisible = true
+    this.tree && this.tree.setCheckedKeys(this.defaultCheckedKeys)
+  }
+
+  private addRights () {
+    this.addRightsDialogVisible = false
+    // 1.获取当前所有选中和半选中的权限
+    // console.log(this.tree!.getCheckedKeys()) // 选中的
+    // console.log(this.tree!.getHalfCheckedKeys()) // 半选中的
+    const allCheckedKeys = [...this.tree!.getCheckedKeys(), ...this.tree!.getHalfCheckedKeys()]
+    console.log('原有的', allCheckedKeys)
+    // 2.获取新增的权限
+    const addCheckedKeys = allCheckedKeys.filter(id => {
+      return !this.defaultCheckedKeys.includes(id)
+    })
+    console.log('新增的', addCheckedKeys)
+    // 3.获取删除的的原有的里面删除掉现在的
+    const removeCheckedKeys = this.defaultCheckedKeys.filter(id => {
+      return !allCheckedKeys.includes(id)
+    })
+    console.log('删除的', removeCheckedKeys)
   }
 
   private getRightsList () {
@@ -345,7 +369,7 @@ export default class Roles extends Vue {
     getRoles(this.searchData)
       .then((response: any) => {
         if (response.status === 200) {
-          this.tableData = response.data.data.users
+          this.tableData = response.data.data.roles
           this.totalCount = response.data.data.totalCount
         } else {
           (this as any).$message.error(response.data.msg)

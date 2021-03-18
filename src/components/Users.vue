@@ -83,7 +83,7 @@
             label="电话">
           </el-table-column>
           <el-table-column
-            prop="roleName"
+            :formatter="getCurrentRoleName"
             label="角色">
           </el-table-column>
           <el-table-column
@@ -194,10 +194,29 @@
         :visible.sync="addRoleDialogVisible"
         width="30%"
         >
-        <span>这是一段信息</span>
+        <el-form ref="form" :model="currentUser" label-width="80px">
+          <el-form-item label="当前用户">
+            <el-input v-model="currentUser.username" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="当前角色">
+            <el-input v-model="currentRoleName" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="新的角色">
+            <el-select v-model="currentRoleId" placeholder="请选择角色">
+              <el-option
+                v-for="item in roles"
+                :key="item.id"
+                :label="item.roleName"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
         <span slot="footer" class="dialog-footer">
     <el-button @click="addRoleDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addRoleDialogVisible = false">确 定</el-button>
+<!--    <el-button type="primary" @click="addRole(currentUser.id)">确 定</el-button>-->
+    <el-button type="primary" @click="addRole(currentUser.id)">新增角色</el-button>
+    <el-button type="danger" @click="removeRole(currentUser.id)">删除角色</el-button>
   </span>
       </el-dialog>
 
@@ -207,7 +226,7 @@
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { ElForm } from 'element-ui/types/form'
-import { getUsers, createUsers, deleteUsers, updateUsers } from '../api/index'
+import { getUsers, createUsers, deleteUsers, updateUsers, getRoles, createUserRole, destroyUserRole } from '../api/index'
 import XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 @Component({
@@ -570,9 +589,75 @@ export default class Users extends Vue {
   // 分配角色相关
   private addRoleDialogVisible = false
 
+  private currentUser = {};
+  private roles = [];
+  private currentRoleId = '';
   private showAddRoleDialog (user: any) {
     this.addRoleDialogVisible = true
-    console.log(user)
+    this.currentUser = user
+    // console.log(user)
+    getRoles({})
+      .then((response: any) => {
+        if (response.status === 200) {
+          console.log(response.data.data)
+          this.roles = response.data.data;
+          (this as any).$message.success('获取角色信息成功')
+        } else {
+          (this as any).$message.error('获取角色信息失败')
+        }
+      })
+      .catch(() => {
+        (this as any).$message.error('获取角色信息失败')
+      })
+  }
+
+  private addRole (userId: string) {
+    this.addRoleDialogVisible = false
+    const obj = { userId: userId, roleId: this.currentRoleId }
+    createUserRole(obj)
+      .then((response: any) => {
+        if (response.status === 200) {
+          // 分配成功后,重新获取角色,更新界面
+          this.getUserList();
+          (this as any).$message.success('分配角色成功')
+        } else {
+          (this as any).$message.error('分配角色失败')
+        }
+      })
+      .catch(() => {
+        (this as any).$message.error('分配角色失败')
+      })
+  }
+
+  private removeRole (userId: string) {
+    this.addRoleDialogVisible = false
+    const obj = { userId: userId, roleId: this.currentRoleId }
+    destroyUserRole(userId, obj)
+      .then((response: any) => {
+        if (response.status === 200) {
+          this.getUserList();
+          (this as any).$message.success('移出角色成功')
+        } else {
+          (this as any).$message.error('移出角色失败')
+        }
+      })
+      .catch(() => {
+        (this as any).$message.error('移出角色失败')
+      })
+  }
+
+  private getCurrentRoleName (user: any) {
+    const roles = user.roles
+    const names: any[] = []
+    roles.forEach((role: any) => {
+      names.push(role.roleName)
+    })
+    return names.join(' | ')
+  }
+
+  private get currentRoleName () {
+    if (JSON.stringify(this.currentUser) === '{}') return ''
+    return this.getCurrentRoleName(this.currentUser)
   }
 }
 </script>
