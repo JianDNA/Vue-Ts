@@ -396,7 +396,7 @@ export default class Roles extends Vue {
         }
       })
       .catch((error) => {
-        (this as any).$message.error(error.response.data.msg)
+        (this as any).$message.error(error.message || error.response.data.msg)
       })
   }
   created (): void {

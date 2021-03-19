@@ -10,6 +10,7 @@ import Roles from '@/components/Roles.vue'
 import Cookies from 'js-cookie'
 Vue.use(VueRouter)
 
+
 const routes: Array<RouteConfig> = [
   {
     path: '/register',
@@ -78,6 +79,7 @@ router.beforeEach((to, from, next) => {
   const routerRights = getRouterRights()
   // console.log(routerRights)
   const flag = isNext(routerRights, to.path)
+  // console.log(flag, 'router')
   if (flag) {
     next()
   } else {

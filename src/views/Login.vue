@@ -21,7 +21,7 @@
           </el-row>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit" style="width: 100%">注册</el-button>
+          <el-button type="primary" @click="onSubmit" style="width: 100%">登录</el-button>
         </el-form-item>
       </el-form>
       <ul class="auth_box">
@@ -151,8 +151,9 @@ export default class Login extends Vue {
             }
           })
           .catch((e) => {
+            console.log(e)
             this.updateCaptcha();
-            (this as any).$message.error(e.response.data.msg)
+            (this as any).$message.error(e.message || e.response.data.msg)
           })
       } else {
         (this as any).$message.error('数据格式不对')

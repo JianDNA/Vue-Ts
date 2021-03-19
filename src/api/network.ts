@@ -8,13 +8,49 @@ axios.defaults.timeout = 3000
 // 让axios在请求头中带上cookie
 axios.defaults.withCredentials = true
 const CancelToken = axios.CancelToken
-// const source = CancelToken.source()
+const source = CancelToken.source()
+
+
+const getActionRights = () => {
+  const data = sessionStorage.getItem('userInfo')
+  if (!data) return null
+  const userInfo = JSON.parse(data)
+  // console.log(userInfo)
+  const actionRights = userInfo.rightsTree.filter((rights: any) => {
+    if (rights.rightsType === 'action') return rights
+  })
+  return actionRights[0]
+}
+
+const isRequest = (actionRights: any, path: string, method: string) => {
+  const reg = new RegExp(`^${actionRights.rightsPath}(/[0-9]*)?$`, 'i')
+  if (reg.test(path) && actionRights.rightsMethod === method) return true
+  if (actionRights.children) {
+    for (let i = 0; i < actionRights.children.length; i++) {
+      const item = actionRights.children[i]
+      if (isRequest(item, path, method)) return true
+    }
+  }
+  return false
+}
+
+const actionRights = getActionRights()
 
 // 拦截器
 // 请求拦截器
 axios.interceptors.request.use(function (config) {
   // 将token放到headers中
   // config.headers.Authorization = sessionStorage.getItem('token')
+  // console.log(actionRights)
+  const curPath = config.url || ''
+  const curMethod = config.method || ''
+  if (curPath.startsWith('/api/v1')) {
+    const flag = isRequest(actionRights, curPath, curMethod)
+    if (!flag) {
+      config.cancelToken = source.token
+      source.cancel('没有对应的请求权限')
+    }
+  }
   return config
 }, function (error) {
   return Promise.reject(error)
