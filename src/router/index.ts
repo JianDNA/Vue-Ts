@@ -40,7 +40,27 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+const getRouterRights = () => {
+  const data = sessionStorage.getItem('userInfo')
+  if (!data) return null
+  const userInfo = JSON.parse(data)
+  const routerRights = userInfo.rightsTree.filter((rights: any) => {
+    if (rights.rightsType === 'router') return rights
+  })
+  return routerRights[0]
+}
 
+const isNext = (routerRights: any, path: string) => {
+  // console.log(routerRights.rightsPath)
+  if (routerRights.rightsPath === path) return true
+  if (routerRights.children) {
+    for (let i = 0; i < routerRights.children.length; i++) {
+      const item = routerRights.children[i]
+      if (isNext(item, path)) return true
+    }
+  }
+  return false
+}
 // 全局前置守卫: 添加路由守卫, 添加权限控制
 router.beforeEach((to, from, next) => {
   // 1.白名单, 注册或登录放行
@@ -55,7 +75,14 @@ router.beforeEach((to, from, next) => {
   if (!token) {
     return next('/login')
   }
-  next()
+  const routerRights = getRouterRights()
+  // console.log(routerRights)
+  const flag = isNext(routerRights, to.path)
+  if (flag) {
+    next()
+  } else {
+    next(false)
+  }
 })
 
 export default router
