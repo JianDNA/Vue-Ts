@@ -20,17 +20,17 @@
           :collapse-transition="false"
           :default-active="defaultActivePath">
           <!--一级菜单-->
-          <el-submenu :index="item.menuName" v-for="item in menus" :key="item.menuName">
+          <el-submenu :index="item.rightsPath" v-for="item in currentMenus" :key="item.id">
             <template slot="title">
-              <i :class="item.icon"></i>
-              <span>{{item.menuName}}</span>
+              <i class="el-icon-setting"></i>
+              <span>{{item.rightsName}}</span>
             </template>
             <!--二级菜单-->
             <el-menu-item-group>
-              <el-menu-item :index="subItem.path" v-for="subItem in item.children" :key="subItem.menuName"  @click="changeDefaultActivePath(subItem.path)">
+              <el-menu-item :index="subItem.rightsPath" v-for="subItem in item.children" :key="subItem.id"  @click="changeDefaultActivePath(subItem.path)">
                 <template slot="title">
-                  <i :class="subItem.icon"></i>
-                  <span>{{subItem.menuName}}</span>
+                  <i class="el-icon-setting"></i>
+                  <span>{{subItem.rightsName}}</span>
                 </template>
               </el-menu-item>
             </el-menu-item-group>
@@ -82,7 +82,15 @@ export default class Admin extends Vue {
     this.defaultActivePath = path
     sessionStorage.setItem('activePath', path)
   }
-  private userInfo = {}
+  private userInfo: any = {}
+  private get currentMenus () {
+    for (let i = 0; i < this.userInfo.rightsTree.length; i++) {
+      const rights = this.userInfo.rightsTree[i]
+      if (rights.rightsType === 'menu') {
+        return rights.children
+      }
+    }
+  }
   created (): void {
     const path = sessionStorage.getItem('activePath')
     this.defaultActivePath = path || ''

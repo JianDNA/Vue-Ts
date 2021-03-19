@@ -169,6 +169,10 @@ export default class Login extends Vue {
         console.log(e)
       })
   }
+
+  mounted () {
+    this.updateCaptcha()
+  }
 }
 </script>
 
